@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Plant AI • Intelligent Disease Detection</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/3095/3095113.png">
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- AOS Animation -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --primary-light: #d1fae5;
+      --secondary: #f59e0b;
+      --dark: #1f2937;
+      --light: #f9fafb;
+      --glass: rgba(255, 255, 255, 0.85);
+      --gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 25px 50px rgba(0, 0, 0, 0.15);
+      --radius: 16px;
+      --radius-lg: 24px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--dark);
+      background-color: var(--light);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 5px;
+    }
+
+    /* Progress Bar */
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: var(--gradient);
+      width: 0%;
+      z-index: 9999;
+      transition: width 0.2s ease;
+    }
+
+    /* Navigation */
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: var(--glass);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      z-index: 1000;
+      padding: 1rem 0;
+      transition: var(--transition);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .navbar.scrolled {
+      padding: 0.7rem 0;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .nav-brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-brand i {
+      font-size: 1.8rem;
+    }
+
+    .nav-link {
+      font-weight: 500;
+      margin: 0 0.8rem;
+      color: var(--dark);
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .nav-link:hover {
+      color: var(--primary);
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      left: 50%;
+      bottom: -5px;
+      transition: var(--transition);
+      transform: translateX(-50%);
+    }
+
+    .nav-link:hover::after {
+      width: 80%;
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 80px;
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                  url('https://images.unsplash.com/photo-1501004318641-b39e6451bec6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2067&q=80');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: white;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary-custom {
+      background: var(--gradient);
+      color: white;
+      padding: 1rem 2.5rem;
+      border-radius: 50px;
+      font-weight: 600;
+      border: none;
+      transition: var(--transition);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-primary-custom:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(16, 185, 129, 0.5);
+      color: white;
+    }
+
+    .btn-secondary-custom {
+      background: transparent;
+      color: white;
+      padding: 1rem 2.5rem;
+      border-radius: 50px;
+      font-weight: 600;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-secondary-custom:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: white;
+      color: white;
+      transform: translateY(-5px);
+    }
+
+    /* Stats */
+    .stats {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      box-shadow: var(--shadow-lg);
+      margin-top: -80px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 1.5rem;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-weight: 500;
+      color: var(--dark);
+      opacity: 0.8;
+    }
+
+    /* Section Styling */
+    .section-padding {
+      padding: 100px 0;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 3rem;
+      position: relative;
+    }
+
+    .section-title h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 1rem;
+    }
+
+    .section-title p {
+      max-width: 700px;
+      margin: 0 auto;
+      color: #6b7280;
+      font-size: 1.1rem;
+    }
+
+    .section-title::after {
+      content: '';
+      width: 80px;
+      height: 4px;
+      background: var(--gradient);
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+
+    /* Disease Cards */
+    .disease-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 2rem;
+      height: 100%;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border-top: 4px solid var(--primary);
+    }
+
+    .disease-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .disease-card.severe {
+      border-top-color: #ef4444;
+    }
+
+    .disease-card.moderate {
+      border-top-color: #f59e0b;
+    }
+
+    .disease-card.mild {
+      border-top-color: #10b981;
+    }
+
+    .disease-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--primary-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+
+    .disease-severity {
+      display: inline-block;
+      padding: 0.3rem 1rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .severity-severe {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .severity-moderate {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .severity-mild {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    .symptoms-list {
+      list-style: none;
+      padding-left: 0;
+      margin-top: 1rem;
+    }
+
+    .symptoms-list li {
+      margin-bottom: 0.5rem;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+
+    .symptoms-list li:before {
+      content: '•';
+      color: var(--primary);
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+
+    /* Upload Section */
+    .upload-section {
+      background: linear-gradient(135deg, #f0fdf4 0%, #f8fafc 100%);
+      border-radius: var(--radius-lg);
+      padding: 4rem 2rem;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-area {
+      border: 3px dashed var(--primary);
+      border-radius: var(--radius);
+      padding: 3rem;
+      text-align: center;
+      background: white;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      z-index: 2;
+    }
+
+    .upload-area:hover {
+      background: var(--primary-light);
+      transform: scale(1.02);
+    }
+
+    .upload-icon {
+      font-size: 4rem;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .upload-input {
+      display: none;
+    }
+
+    .file-info {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: white;
+      border-radius: var(--radius);
+      display: none;
+    }
+
+    .analyze-btn {
+      background: var(--gradient);
+      color: white;
+      padding: 1rem 3rem;
+      border-radius: 50px;
+      font-weight: 600;
+      border: none;
+      transition: var(--transition);
+      margin-top: 2rem;
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .analyze-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(16, 185, 129, 0.5);
+    }
+
+    /* Results Preview */
+    .results-preview {
+      background: white;
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      box-shadow: var(--shadow);
+      margin-top: 3rem;
+      display: none;
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .disease-name {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .confidence {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 0.5rem 1.5rem;
+      border-radius: 50px;
+      font-weight: 600;
+    }
+
+    /* Products Section */
+    .products-section {
+      background: #f8fafc;
+      border-radius: var(--radius);
+      padding: 2rem;
+      margin-top: 2rem;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border-left: 4px solid var(--primary);
+    }
+
+    .product-card:hover {
+      transform: translateX(5px);
+    }
+
+    .product-card h6 {
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .product-price {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .product-rating {
+      color: #f59e0b;
+      font-size: 0.9rem;
+    }
+
+    /* Export Modal */
+    .export-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+
+    .export-content {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      max-width: 800px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .export-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--primary);
+    }
+
+    .export-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--dark);
+      color: white;
+      padding: 3rem 0;
+      text-align: center;
+    }
+
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .social-icon {
+      width: 50px;
+      height: 50px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-decoration: none;
+      font-size: 1.2rem;
+      transition: var(--transition);
+    }
+
+    .social-icon:hover {
+      background: var(--primary);
+      transform: translateY(-5px);
+    }
+
+    .copyright {
+      margin-top: 2rem;
+      color: #9ca3af;
+      font-size: 0.9rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .section-padding {
+        padding: 60px 0;
+      }
+      
+      .section-title h2 {
+        font-size: 2rem;
+      }
+      
+      .stats {
+        margin-top: -40px;
+        padding: 1.5rem;
+      }
+      
+      .stat-number {
+        font-size: 2rem;
+      }
+      
+      .hero-btns {
+        flex-direction: column;
+      }
+      
+      .export-content {
+        padding: 1.5rem;
+      }
+    }
+
+    /* Floating Elements */
+    .floating-element {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.1;
+      z-index: 1;
+    }
+
+    .floating-1 {
+      width: 300px;
+      height: 300px;
+      background: var(--primary);
+      top: 10%;
+      right: 5%;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .floating-2 {
+      width: 200px;
+      height: 200px;
+      background: var(--secondary);
+      bottom: 15%;
+      left: 5%;
+      animation: float 15s infinite ease-in-out reverse;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-30px) rotate(180deg); }
+    }
+
+    /* Loader */
+    .loader {
+      display: none;
+      width: 60px;
+      height: 60px;
+      border: 5px solid rgba(16, 185, 129, 0.2);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 1s linear infinite;
+      margin: 2rem auto;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Knowledge Section */
+    .knowledge-section {
+      background: linear-gradient(135deg, #f8fafc 0%, #f0fdf4 100%);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Progress Bar -->
+  <div id="progress-bar"></div>
+
+  <!-- Export Modal -->
+  <div class="export-modal" id="exportModal">
+    <div class="export-content">
+      <div class="export-header">
+        <h3>Plant Disease Analysis Report</h3>
+        <button class="btn btn-close" onclick="closeExportModal()"></button>
+      </div>
+      
+      <div id="reportContent">
+        <!-- Report will be generated here -->
+      </div>
+      
+      <div class="export-actions">
+        <button class="btn btn-primary" onclick="printReport()">
+          <i class="fas fa-print me-2"></i> Print Report
+        </button>
+        <button class="btn btn-success" onclick="downloadPDF()">
+          <i class="fas fa-download me-2"></i> Download PDF
+        </button>
+        <button class="btn btn-outline-secondary" onclick="closeExportModal()">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="nav-brand" href="#home">
+        <i class="fas fa-leaf"></i> Plant AI
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item">
+            <a class="nav-link" href="#home">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#diseases">Diseases</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#detect">Detect</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="floating-element floating-1"></div>
+    <div class="floating-element floating-2"></div>
+    <div class="container">
+      <div class="hero-content" data-aos="fade-up">
+        <h1>AI-Powered Plant Disease Detection</h1>
+        <p>Upload a plant leaf image and get instant diagnosis with treatment recommendations and product suggestions.</p>
+        <div class="hero-btns">
+          <a href="#detect">
+            <button class="btn-primary-custom">
+              <i class="fas fa-cloud-upload-alt"></i> Analyze Plant Now
+            </button>
+          </a>
+          <a href="#diseases">
+            <button class="btn-secondary-custom">
+              <i class="fas fa-book-medical"></i> Learn About Diseases
+            </button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="container">
+    <div class="stats" data-aos="fade-up">
+      <div class="row">
+        <div class="col-md-3 col-6">
+          <div class="stat-item">
+            <div class="stat-number">99.2%</div>
+            <div class="stat-label">Accuracy</div>
+          </div>
+        </div>
+        <div class="col-md-3 col-6">
+          <div class="stat-item">
+            <div class="stat-number">38+</div>
+            <div class="stat-label">Plant Diseases</div>
+          </div>
+        </div>
+        <div class="col-md-3 col-6">
+          <div class="stat-item">
+            <div class="stat-number">15K+</div>
+            <div class="stat-label">Images Analyzed</div>
+          </div>
+        </div>
+        <div class="col-md-3 col-6">
+          <div class="stat-item">
+            <div class="stat-number">2.7s</div>
+            <div class="stat-label">Detection Time</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Plant Diseases Knowledge Section -->
+  <section class="section-padding knowledge-section" id="diseases">
+    <div class="container">
+      <div class="section-title" data-aos="fade-up">
+        <h2>Common Plant Diseases</h2>
+        <p>Learn about common plant diseases, their symptoms, and treatments.</p>
+      </div>
+      
+      <div class="row g-4">
+        <!-- Tomato Early Blight -->
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+          <div class="disease-card severe">
+            <div class="disease-icon">
+              <i class="fas fa-seedling"></i>
+            </div>
+            <span class="disease-severity severity-severe">Severe</span>
+            <h4>Tomato Early Blight</h4>
+            <p><strong>Caused by:</strong> Alternaria solani fungus</p>
+            <p><strong>Treatment:</strong> Copper fungicides, crop rotation</p>
+          </div>
+        </div>
+        
+        <!-- Apple Scab -->
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="disease-card moderate">
+            <div class="disease-icon">
+              <i class="fas fa-apple-alt"></i>
+            </div>
+            <span class="disease-severity severity-moderate">Moderate</span>
+            <h4>Apple Scab</h4>
+            <p><strong>Caused by:</strong> Venturia inaequalis fungus</p>
+            <p><strong>Treatment:</strong> Fungicide sprays, sanitation</p>
+          </div>
+        </div>
+        
+        <!-- Potato Late Blight -->
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+          <div class="disease-card severe">
+            <div class="disease-icon">
+              <i class="fas fa-leaf"></i>
+            </div>
+            <span class="disease-severity severity-severe">Severe</span>
+            <h4>Potato Late Blight</h4>
+            <p><strong>Caused by:</strong> Phytophthora infestans</p>
+            <p><strong>Treatment:</strong> Fungicides, proper drainage</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Detection Section -->
+  <section class="section-padding" id="detect">
+    <div class="container">
+      <div class="section-title" data-aos="fade-up">
+        <h2>Detect Plant Disease</h2>
+        <p>Upload an image of a plant leaf and get instant AI-powered analysis.</p>
+      </div>
+      
+      <div class="upload-section" data-aos="fade-up">
+        <div class="upload-area" id="dropArea">
+          <div class="upload-icon">
+            <i class="fas fa-cloud-upload-alt"></i>
+          </div>
+          <h4 class="mb-3">Drag & Drop Plant Image Here</h4>
+          <p class="text-muted mb-4">Or click to browse files. Supports JPG, PNG, WebP</p>
+          <input type="file" id="fileInput" class="upload-input" accept="image/*">
+          <button class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()">
+            <i class="fas fa-folder-open me-2"></i> Browse Files
+          </button>
+          <div class="file-info" id="fileInfo">
+            <div class="d-flex align-items-center">
+              <i class="fas fa-file-image text-primary me-3 fs-4"></i>
+              <div>
+                <h6 class="mb-1" id="fileName">image.jpg</h6>
+                <p class="text-muted mb-0" id="fileSize">2.4 MB</p>
+              </div>
+              <button class="btn btn-sm btn-outline-danger ms-auto" onclick="clearFile()">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="text-center mt-5">
+          <div class="loader" id="loader"></div>
+          <button class="analyze-btn" id="analyzeBtn" onclick="analyzePlant()">
+            <i class="fas fa-search me-2"></i> Run AI Analysis
+          </button>
+        </div>
+      </div>
+      
+      <!-- Results Preview -->
+      <div class="results-preview" id="resultsPreview">
+        <div class="result-header">
+          <div>
+            <h5 class="text-muted">Analysis Result</h5>
+            <div class="disease-name" id="diseaseName">Tomato Early Blight</div>
+          </div>
+          <div class="confidence" id="confidenceLevel">94.7% Confidence</div>
+        </div>
+        
+        <div class="row">
+          <div class="col-lg-6">
+            <h6 class="mb-3">Plant Overview</h6>
+            <p><strong>Plant Type:</strong> <span id="plantType">Tomato</span></p>
+            <p><strong>Affected Area:</strong> <span id="affectedArea">Leaves</span></p>
+            <p><strong>Severity:</strong> <span id="severity">Moderate</span></p>
+            <p><strong>Detection Time:</strong> <span id="detectionTime">2.3 seconds</span></p>
+          </div>
+          <div class="col-lg-6">
+            <h6 class="mb-3">Visual Indicators</h6>
+            <div class="d-flex flex-wrap gap-2 mb-3">
+              <span class="badge bg-primary">Dark spots</span>
+              <span class="badge bg-primary">Yellow halos</span>
+              <span class="badge bg-primary">Concentric rings</span>
+              <span class="badge bg-primary">Lower leaves affected</span>
+            </div>
+            <h6 class="mb-3">AI Confidence Breakdown</h6>
+            <div class="progress mb-2" style="height: 10px;">
+              <div class="progress-bar bg-success" role="progressbar" style="width: 95%"></div>
+            </div>
+            <div class="progress mb-2" style="height: 10px;">
+              <div class="progress-bar bg-warning" role="progressbar" style="width: 3%"></div>
+            </div>
+            <div class="progress" style="height: 10px;">
+              <div class="progress-bar bg-danger" role="progressbar" style="width: 2%"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-4">
+          <h6><i class="fas fa-prescription-bottle-alt me-2"></i> Recommended Treatment</h6>
+          <p id="treatmentText">Apply copper-based fungicides every 7-10 days. Remove affected leaves to prevent spread. Ensure proper spacing between plants for air circulation. Avoid overhead watering.</p>
+        </div>
+
+        <!-- Products Section -->
+        <div class="products-section" id="productsSection">
+          <h6><i class="fas fa-shopping-cart me-2"></i> Recommended Products</h6>
+          <div class="row mt-3" id="productsList">
+            <!-- Products will be added here dynamically -->
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-3 mt-4">
+          <button class="btn btn-primary" onclick="generateReport()">
+            <i class="fas fa-file-pdf me-2"></i> Export Full Report
+          </button>
+          <button class="btn btn-success" onclick="viewProducts()">
+            <i class="fas fa-shopping-cart me-2"></i> Buy Recommended Products
+          </button>
+          <button class="btn btn-outline-secondary" onclick="clearResults()">
+            <i class="fas fa-redo me-2"></i> New Analysis
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-logo">
+        <i class="fas fa-leaf"></i> Plant AI
+      </div>
+      <p class="text-light mb-4">Advanced AI for plant disease detection and treatment recommendations.</p>
+      
+      <div class="social-icons">
+        <a href="https://github.com" class="social-icon" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+        <a href="https://linkedin.com" class="social-icon" target="_blank">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+        <a href="https://instagram.com" class="social-icon" target="_blank">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </div>
+      
+      <div class="copyright">
+        <p>© 2026 Plant AI • Developed by Ojaswi Makode</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  
+  <script>
+    // Initialize AOS animations
+    AOS.init({
+      duration: 800,
+      offset: 100,
+      once: true
+    });
+
+    // Sample products data
+    const products = [
+      {
+        id: 1,
+        name: "Copper Fungicide Spray",
+        brand: "GardenSafe",
+        price: "$24.99",
+        rating: 4.5,
+        description: "Effective against fungal diseases including blight and scab",
+        link: "#",
+        category: "fungicide"
+      },
+      {
+        id: 2,
+        name: "Neem Oil Concentrate",
+        brand: "Bonide",
+        price: "$18.99",
+        rating: 4.7,
+        description: "Organic treatment for multiple plant diseases",
+        link: "#",
+        category: "organic"
+      },
+      {
+        id: 3,
+        name: "Disease Control Fertilizer",
+        brand: "Miracle-Gro",
+        price: "$29.99",
+        rating: 4.3,
+        description: "Nutrient-rich fertilizer with disease resistance",
+        link: "#",
+        category: "fertilizer"
+      },
+      {
+        id: 4,
+        name: "Bacterial Disease Control",
+        brand: "Serenade",
+        price: "$21.50",
+        rating: 4.6,
+        description: "Biological fungicide for bacterial infections",
+        link: "#",
+        category: "bacterial"
+      }
+    ];
+
+    // Sample diseases data
+    const diseases = {
+      "tomato_early_blight": {
+        name: "Tomato Early Blight",
+        plantType: "Tomato",
+        severity: "Moderate",
+        treatment: "Apply copper-based fungicides every 7-10 days. Remove affected leaves to prevent spread. Ensure proper spacing between plants for air circulation. Avoid overhead watering.",
+        products: [1, 2, 3],
+        prevention: "Rotate crops yearly, use resistant varieties, avoid wetting foliage"
+      },
+      "apple_scab": {
+        name: "Apple Scab",
+        plantType: "Apple",
+        severity: "Moderate",
+        treatment: "Apply fungicide sprays during bud break. Remove fallen leaves in autumn. Plant resistant cultivars.",
+        products: [1, 4],
+        prevention: "Proper pruning, good air circulation, sanitation"
+      },
+      "potato_late_blight": {
+        name: "Potato Late Blight",
+        plantType: "Potato",
+        severity: "Severe",
+        treatment: "Apply fungicides preventively. Destroy infected plants. Use certified disease-free seed potatoes.",
+        products: [1, 3, 4],
+        prevention: "Crop rotation, proper drainage, resistant varieties"
+      }
+    };
+
+    // Scroll progress bar
+    window.addEventListener('scroll', () => {
+      const scrollTop = document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrollPercent = (scrollTop / scrollHeight) * 100;
+      document.getElementById('progress-bar').style.width = scrollPercent + '%';
+      
+      // Navbar scroll effect
+      const navbar = document.querySelector('.navbar');
+      if (scrollTop > 100) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // File upload functionality
+    const dropArea = document.getElementById('dropArea');
+    const fileInput = document.getElementById('fileInput');
+    const fileInfo = document.getElementById('fileInfo');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const resultsPreview = document.getElementById('resultsPreview');
+    const loader = document.getElementById('loader');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const productsList = document.getElementById('productsList');
+    const exportModal = document.getElementById('exportModal');
+    const reportContent = document.getElementById('reportContent');
+
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    // Highlight drop area when dragging over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropArea.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight() {
+      dropArea.style.backgroundColor = 'var(--primary-light)';
+      dropArea.style.borderColor = 'var(--primary-dark)';
+    }
+
+    function unhighlight() {
+      dropArea.style.backgroundColor = 'white';
+      dropArea.style.borderColor = 'var(--primary)';
+    }
+
+    // Handle dropped files
+    dropArea.addEventListener('drop', handleDrop, false);
+    fileInput.addEventListener('change', handleFileSelect, false);
+
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      handleFiles(files);
+    }
+
+    function handleFileSelect() {
+      const files = fileInput.files;
+      handleFiles(files);
+    }
+
+    function handleFiles(files) {
+      if (files.length > 0) {
+        const file = files[0];
+        if (file.type.startsWith('image/')) {
+          // Show file info
+          fileName.textContent = file.name;
+          fileSize.textContent = formatFileSize(file.size);
+          fileInfo.style.display = 'block';
+          
+          // Preview image
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            console.log('Image loaded for analysis');
+          };
+          reader.readAsDataURL(file);
+        } else {
+          alert('Please select an image file (JPG, PNG, or WebP)');
+        }
+      }
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes < 1024) return bytes + ' bytes';
+      else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+      else return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+
+    function clearFile() {
+      fileInput.value = '';
+      fileInfo.style.display = 'none';
+    }
+
+    function clearResults() {
+      resultsPreview.style.display = 'none';
+      clearFile();
+      productsList.innerHTML = '';
+    }
+
+    // Analyze plant function
+    function analyzePlant() {
+      if (!fileInput.files.length) {
+        alert('Please select an image first');
+        return;
+      }
+      
+      // Show loader and disable button
+      loader.style.display = 'block';
+      analyzeBtn.disabled = true;
+      analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Analyzing...';
+      
+      // Simulate API call delay
+      setTimeout(() => {
+        // Hide loader and enable button
+        loader.style.display = 'none';
+        analyzeBtn.disabled = false;
+        analyzeBtn.innerHTML = '<i class="fas fa-search me-2"></i> Run AI Analysis';
+        
+        // Get random disease for demo
+        const diseaseKeys = Object.keys(diseases);
+        const randomDiseaseKey = diseaseKeys[Math.floor(Math.random() * diseaseKeys.length)];
+        const disease = diseases[randomDiseaseKey];
+        
+        // Update results
+        document.getElementById('diseaseName').textContent = disease.name;
+        document.getElementById('plantType').textContent = disease.plantType;
+        document.getElementById('severity').textContent = disease.severity;
+        document.getElementById('treatmentText').textContent = disease.treatment;
+        
+        // Show confidence (random for demo)
+        const confidence = (Math.random() * 10 + 90).toFixed(1);
+        document.getElementById('confidenceLevel').textContent = `${confidence}% Confidence`;
+        
+        // Load recommended products
+        loadProducts(disease.products);
+        
+        // Show results with animation
+        resultsPreview.style.display = 'block';
+        resultsPreview.style.opacity = '0';
+        resultsPreview.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+          resultsPreview.style.transition = 'all 0.5s ease';
+          resultsPreview.style.opacity = '1';
+          resultsPreview.style.transform = 'translateY(0)';
+        }, 50);
+        
+        // Scroll to results
+        resultsPreview.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 2000);
+    }
+
+    function loadProducts(productIds) {
+      productsList.innerHTML = '';
+      
+      productIds.forEach(productId => {
+        const product = products.find(p => p.id === productId);
+        if (product) {
+          const productCard = document.createElement('div');
+          productCard.className = 'col-md-6';
+          productCard.innerHTML = `
+            <div class="product-card">
+              <h6>${product.name}</h6>
+              <p class="mb-2"><small>${product.brand}</small></p>
+              <p class="mb-2">${product.description}</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="product-price">${product.price}</span>
+                  <div class="product-rating">
+                    ${'★'.repeat(Math.floor(product.rating))}${'☆'.repeat(5-Math.floor(product.rating))}
+                    <span class="ms-1">${product.rating}</span>
+                  </div>
+                </div>
+                <button class="btn btn-sm btn-outline-primary" onclick="viewProduct(${product.id})">
+                  View Details
+                </button>
+              </div>
+            </div>
+          `;
+          productsList.appendChild(productCard);
+        }
+      });
+    }
+
+    function viewProduct(productId) {
+      const product = products.find(p => p.id === productId);
+      if (product) {
+        alert(`Product: ${product.name}\nBrand: ${product.brand}\nPrice: ${product.price}\n\n${product.description}\n\nThis is a demo. In a real application, this would redirect to a product page.`);
+      }
+    }
+
+    function viewProducts() {
+      alert('This would redirect to an e-commerce page with all recommended products. In a real application, this could integrate with Amazon, gardening stores, or agricultural suppliers.');
+    }
+
+    // Export and Report Functions
+    function generateReport() {
+      const diseaseName = document.getElementById('diseaseName').textContent;
+      const plantType = document.getElementById('plantType').textContent;
+      const severity = document.getElementById('severity').textContent;
+      const confidence = document.getElementById('confidenceLevel').textContent;
+      const treatment = document.getElementById('treatmentText').textContent;
+      
+      const date = new Date().toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      
+      reportContent.innerHTML = `
+        <div class="report-content">
+          <div class="text-center mb-4">
+            <h4><i class="fas fa-leaf text-primary me-2"></i>Plant AI Analysis Report</h4>
+            <p class="text-muted">Generated on ${date}</p>
+          </div>
+          
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <h6>Disease Information</h6>
+              <table class="table table-bordered">
+                <tr>
+                  <td><strong>Disease Name:</strong></td>
+                  <td>${diseaseName}</td>
+                </tr>
+                <tr>
+                  <td><strong>Plant Type:</strong></td>
+                  <td>${plantType}</td>
+                </tr>
+                <tr>
+                  <td><strong>Severity:</strong></td>
+                  <td><span class="badge bg-${severity === 'Severe' ? 'danger' : severity === 'Moderate' ? 'warning' : 'success'}">${severity}</span></td>
+                </tr>
+                <tr>
+                  <td><strong>AI Confidence:</strong></td>
+                  <td>${confidence}</td>
+                </tr>
+                <tr>
+                  <td><strong>Report ID:</strong></td>
+                  <td>PLT-${Date.now().toString().slice(-8)}</td>
+                </tr>
+              </table>
+            </div>
+            <div class="col-md-6">
+              <h6>Analysis Summary</h6>
+              <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Key Findings:</strong> Based on image analysis, the AI detected characteristic symptoms matching ${diseaseName}.
+              </div>
+            </div>
+          </div>
+          
+          <h6>Treatment Protocol</h6>
+          <div class="alert alert-success">
+            <i class="fas fa-prescription-bottle-alt me-2"></i>
+            ${treatment}
+          </div>
+          
+          <h6 class="mt-4">Recommended Products</h6>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Brand</th>
+                <th>Price</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${products.filter(p => [1, 2, 3].includes(p.id)).map(product => `
+                <tr>
+                  <td>${product.name}</td>
+                  <td>${product.brand}</td>
+                  <td>${product.price}</td>
+                  <td>${product.description.substring(0, 50)}...</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          
+          <h6 class="mt-4">Prevention Guidelines</h6>
+          <ul class="list-group mb-4">
+            <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i>Rotate crops annually to prevent soil-borne diseases</li>
+            <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i>Use disease-resistant plant varieties</li>
+            <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i>Ensure proper spacing for air circulation</li>
+            <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i>Water at soil level to avoid wetting foliage</li>
+            <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i>Regularly monitor plants for early signs</li>
+          </ul>
+          
+          <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Disclaimer:</strong> This report is generated by AI and should be used as guidance. For severe cases, consult with agricultural experts.
+          </div>
+          
+          <div class="text-center mt-4">
+            <p class="text-muted">Report generated by Plant AI System • Contact: support@plant-ai.com</p>
+          </div>
+        </div>
+      `;
+      
+      exportModal.style.display = 'flex';
+    }
+
+    function closeExportModal() {
+      exportModal.style.display = 'none';
+    }
+
+    function printReport() {
+      const printContent = reportContent.innerHTML;
+      const originalContent = document.body.innerHTML;
+      
+      document.body.innerHTML = `
+        <div style="padding: 20px;">
+          <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #10b981; padding-bottom: 20px;">
+            <h2 style="color: #10b981;">Plant AI Analysis Report</h2>
+            <p>Generated on ${new Date().toLocaleDateString()}</p>
+          </div>
+          ${printContent}
+        </div>
+      `;
+      
+      window.print();
+      document.body.innerHTML = originalContent;
+      location.reload();
+    }
+
+    function downloadPDF() {
+      alert('In a real application, this would generate and download a PDF file using libraries like jsPDF or by sending data to a backend service.');
+      // For now, we'll show a simulation
+      const downloadLink = document.createElement('a');
+      downloadLink.href = '#';
+      downloadLink.download = `plant-ai-report-${Date.now()}.pdf`;
+      downloadLink.click();
+      
+      // Show success message
+      const alertDiv = document.createElement('div');
+      alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+      alertDiv.style.zIndex = '99999';
+      alertDiv.innerHTML = `
+        <i class="fas fa-check-circle me-2"></i>
+        Report PDF download started (demo simulation)
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
+      document.body.appendChild(alertDiv);
+      
+      setTimeout(() => {
+        alertDiv.remove();
+      }, 3000);
+    }
+
+    // Dynamic navbar on mobile
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        const navbarToggler = document.querySelector('.navbar-toggler');
+        const navbarCollapse = document.querySelector('.navbar-collapse');
+        if (navbarToggler && !navbarCollapse.classList.contains('show')) {
+          navbarToggler.click();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
