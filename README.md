@@ -60,3 +60,14 @@ The best-performing model achieved approximately **98.4% accuracy** on the test 
 
 ## 🗂️ Project Structure
 
+```text
+PlantAI/
+├── app.py
+├── model.py
+├── utils.py
+├── requirements.txt
+├── Models/
+│   └── plantDisease-resnet34.pth
+├── templates/
+├── static/
+└── uploads/
