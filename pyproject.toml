@@ -1,0 +1,13 @@
+[project]
+name = "plantai"
+version = "0.1.0"
+description = "Plant disease detection with Flask"
+requires-python = ">=3.9"
+
+# Tell Vercel where the Flask app lives (not in a standard path)
+[project.scripts]
+app = "Flask.app:app"
+
+[tool.vercel]
+# Optional: run a build step before deploy (e.g. download assets)
+# build = "python build.py"

@@ -1,30 +1,36 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, request, jsonify
 from markupsafe import Markup
-from model import predict_image
 import utils
+from model import predict_image
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates", static_folder="static")
 
 
-@app.route('/', methods=['GET'])
+@app.route("/")
 def home():
-    return render_template('index.html')
+    return render_template("index.html")
 
 
-@app.route('/predict', methods=['GET', 'POST'])
+@app.route("/predict", methods=["POST"])
 def predict():
-    if request.method == 'POST':
-        try:
-            file = request.files['file']
-            img = file.read()
-            prediction = predict_image(img)
-            print(prediction)
-            res = Markup(utils.disease_dic[prediction])
-            return render_template('display.html', status=200, result=res)
-        except Exception as e:
-            print(e)
-    return render_template('index.html', status=500, res="Internal Server Error")
+    if "file" not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
 
+    file = request.files["file"]
+    if file.filename == "":
+        return jsonify({"error": "Empty file"}), 400
+
+    img_bytes = file.read()
+    prediction = predict_image(img_bytes)
+
+    result_html = utils.disease_dic.get(
+        prediction, f"<p>Prediction: {prediction}</p>"
+    )
+
+    return jsonify({
+        "prediction": prediction,
+        "result": result_html
+    })
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
