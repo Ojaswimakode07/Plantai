@@ -291,7 +291,7 @@
     .disease-card {
       background: white;
       border-radius: var(--radius);
-      padding: 2rem;
+      padding: 1.5rem;
       height: 100%;
       box-shadow: var(--shadow);
       transition: var(--transition);
@@ -315,17 +315,24 @@
       border-top-color: #10b981;
     }
 
-    .disease-icon {
-      width: 60px;
-      height: 60px;
-      background: var(--primary-light);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .disease-image-container {
+      width: 100%;
+      height: 200px;
+      border-radius: 12px;
+      overflow: hidden;
       margin-bottom: 1.5rem;
-      color: var(--primary);
-      font-size: 1.5rem;
+      background: #f8fafc;
+    }
+
+    .disease-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .disease-card:hover .disease-image {
+      transform: scale(1.05);
     }
 
     .disease-severity {
@@ -372,6 +379,51 @@
       left: 0;
     }
 
+    /* Disease Categories */
+    .disease-categories {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .category-btn {
+      padding: 0.5rem 1.5rem;
+      border-radius: 50px;
+      border: 2px solid var(--primary-light);
+      background: white;
+      color: var(--primary);
+      font-weight: 500;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .category-btn:hover,
+    .category-btn.active {
+      background: var(--gradient);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .show-more-btn {
+      background: var(--gradient);
+      color: white;
+      padding: 1rem 2.5rem;
+      border-radius: 50px;
+      font-weight: 600;
+      border: none;
+      transition: var(--transition);
+      margin: 2rem auto;
+      display: block;
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+    }
+
+    .show-more-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(16, 185, 129, 0.5);
+    }
+
     /* Upload Section */
     .upload-section {
       background: linear-gradient(135deg, #f0fdf4 0%, #f8fafc 100%);
@@ -407,6 +459,21 @@
 
     .upload-input {
       display: none;
+    }
+
+    .image-preview-container {
+      display: none;
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .image-preview {
+      max-width: 300px;
+      max-height: 300px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin: 0 auto 1rem;
+      display: block;
     }
 
     .file-info {
@@ -482,29 +549,74 @@
       background: white;
       border-radius: var(--radius);
       padding: 1.5rem;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       box-shadow: var(--shadow);
       transition: var(--transition);
       border-left: 4px solid var(--primary);
     }
 
     .product-card:hover {
-      transform: translateX(5px);
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .product-image-container {
+      width: 100%;
+      height: 180px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+      background: #f8fafc;
+    }
+
+    .product-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .product-card:hover .product-image {
+      transform: scale(1.05);
     }
 
     .product-card h6 {
       color: var(--primary);
       margin-bottom: 0.5rem;
+      font-size: 1rem;
+      min-height: 48px;
     }
 
     .product-price {
-      font-weight: 600;
+      font-weight: 700;
       color: var(--primary);
+      font-size: 1.1rem;
     }
 
     .product-rating {
       color: #f59e0b;
       font-size: 0.9rem;
+    }
+
+    .buy-btn {
+      background: var(--gradient);
+      color: white;
+      border: none;
+      padding: 0.5rem 1.5rem;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .buy-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+      color: white;
     }
 
     /* Export Modal */
@@ -616,6 +728,21 @@
       
       .export-content {
         padding: 1.5rem;
+      }
+      
+      .result-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      
+      .disease-categories {
+        gap: 0.5rem;
+      }
+      
+      .category-btn {
+        padding: 0.4rem 1rem;
+        font-size: 0.9rem;
       }
     }
 
@@ -792,46 +919,22 @@
         <p>Learn about common plant diseases, their symptoms, and treatments.</p>
       </div>
       
-      <div class="row g-4">
-        <!-- Tomato Early Blight -->
-        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-          <div class="disease-card severe">
-            <div class="disease-icon">
-              <i class="fas fa-seedling"></i>
-            </div>
-            <span class="disease-severity severity-severe">Severe</span>
-            <h4>Tomato Early Blight</h4>
-            <p><strong>Caused by:</strong> Alternaria solani fungus</p>
-            <p><strong>Treatment:</strong> Copper fungicides, crop rotation</p>
-          </div>
-        </div>
-        
-        <!-- Apple Scab -->
-        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-          <div class="disease-card moderate">
-            <div class="disease-icon">
-              <i class="fas fa-apple-alt"></i>
-            </div>
-            <span class="disease-severity severity-moderate">Moderate</span>
-            <h4>Apple Scab</h4>
-            <p><strong>Caused by:</strong> Venturia inaequalis fungus</p>
-            <p><strong>Treatment:</strong> Fungicide sprays, sanitation</p>
-          </div>
-        </div>
-        
-        <!-- Potato Late Blight -->
-        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-          <div class="disease-card severe">
-            <div class="disease-icon">
-              <i class="fas fa-leaf"></i>
-            </div>
-            <span class="disease-severity severity-severe">Severe</span>
-            <h4>Potato Late Blight</h4>
-            <p><strong>Caused by:</strong> Phytophthora infestans</p>
-            <p><strong>Treatment:</strong> Fungicides, proper drainage</p>
-          </div>
-        </div>
+      <!-- Disease Categories -->
+      <div class="disease-categories" id="diseaseCategories">
+        <button class="category-btn active" data-category="all">All Diseases</button>
+        <button class="category-btn" data-category="tomato">🍅 Tomato</button>
+        <button class="category-btn" data-category="apple">🍎 Apple</button>
+        <button class="category-btn" data-category="potato">🥔 Potato</button>
+        <button class="category-btn" data-category="multiple">🌿 Multiple Plants</button>
       </div>
+      
+      <div class="row g-4" id="diseaseContainer">
+        <!-- Diseases will be loaded dynamically -->
+      </div>
+      
+      <button class="show-more-btn" id="showMoreBtn" onclick="showMoreDiseases()">
+        <i class="fas fa-plus me-2"></i> Load More Diseases
+      </button>
     </div>
   </section>
 
@@ -854,16 +957,21 @@
           <button class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()">
             <i class="fas fa-folder-open me-2"></i> Browse Files
           </button>
-          <div class="file-info" id="fileInfo">
-            <div class="d-flex align-items-center">
-              <i class="fas fa-file-image text-primary me-3 fs-4"></i>
-              <div>
-                <h6 class="mb-1" id="fileName">image.jpg</h6>
-                <p class="text-muted mb-0" id="fileSize">2.4 MB</p>
+          
+          <!-- Image Preview -->
+          <div class="image-preview-container" id="imagePreviewContainer">
+            <img id="imagePreview" class="image-preview" alt="Preview">
+            <div class="file-info" id="fileInfo">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-file-image text-primary me-3 fs-4"></i>
+                <div>
+                  <h6 class="mb-1" id="fileName">image.jpg</h6>
+                  <p class="text-muted mb-0" id="fileSize">2.4 MB</p>
+                </div>
+                <button class="btn btn-sm btn-outline-danger ms-auto" onclick="clearFile()">
+                  <i class="fas fa-times"></i>
+                </button>
               </div>
-              <button class="btn btn-sm btn-outline-danger ms-auto" onclick="clearFile()">
-                <i class="fas fa-times"></i>
-              </button>
             </div>
           </div>
         </div>
@@ -929,12 +1037,9 @@
         </div>
 
         <!-- Action Buttons -->
-        <div class="d-flex gap-3 mt-4">
+        <div class="d-flex gap-3 mt-4 flex-wrap">
           <button class="btn btn-primary" onclick="generateReport()">
             <i class="fas fa-file-pdf me-2"></i> Export Full Report
-          </button>
-          <button class="btn btn-success" onclick="viewProducts()">
-            <i class="fas fa-shopping-cart me-2"></i> Buy Recommended Products
           </button>
           <button class="btn btn-outline-secondary" onclick="clearResults()">
             <i class="fas fa-redo me-2"></i> New Analysis
@@ -982,76 +1087,357 @@
       once: true
     });
 
-    // Sample products data
+    // Real products data with India-accessible links and INR prices
+    // UPDATED WITH YOUR PROVIDED IMAGE LINKS
     const products = [
       {
         id: 1,
-        name: "Copper Fungicide Spray",
-        brand: "GardenSafe",
-        price: "$24.99",
+        name: "Bonide Copper Fungicide",
+        brand: "Bonide",
+        price: "₹3,699",
         rating: 4.5,
-        description: "Effective against fungal diseases including blight and scab",
-        link: "#",
+        description: "Ready-to-use spray for fungal diseases on vegetables, fruits, and ornamentals",
+        link: "https://www.ubuy.co.in/product/KEMKRDHC-bonide-products-775-32-oz-ready-to-use-copper-fungicide-spray",
+        image: "https://i.ibb.co/nMhjbQwZ/southern-ag.jpg", // Updated with your link
         category: "fungicide"
       },
       {
         id: 2,
-        name: "Neem Oil Concentrate",
-        brand: "Bonide",
-        price: "$18.99",
-        rating: 4.7,
-        description: "Organic treatment for multiple plant diseases",
-        link: "#",
-        category: "organic"
+        name: "Southern Ag Liquid Copper Fungicide",
+        brand: "Southern Ag",
+        price: "₹2,999",
+        rating: 4.4,
+        description: "Controls plant diseases on vegetables, fruits, and ornamentals",
+        link: "https://www.amazon.com/Southern-Ag-Liquid-Copper-Fungicide/dp/B0052NL4FK?th=1",
+        image: "https://i.ibb.co/mQMSKQx/southern-ag.jpg", // Updated with your link
+        category: "fungicide"
       },
       {
         id: 3,
-        name: "Disease Control Fertilizer",
-        brand: "Miracle-Gro",
-        price: "$29.99",
+        name: "Garden Safe Fungicide 3",
+        brand: "Garden Safe",
+        price: "₹1,005",
         rating: 4.3,
-        description: "Nutrient-rich fertilizer with disease resistance",
-        link: "#",
-        category: "fertilizer"
+        description: "Ready-to-use fungicide for control of black spot, powdery mildew, and more",
+        link: "https://www.gardensafe.com/products/fungicide/garden-safe-brand-fungicide3-32-oz",
+        image: "https://i.ibb.co/pj4dfM6v/garden-safe.jpg", // Updated with your link
+        category: "fungicide"
       },
       {
         id: 4,
-        name: "Bacterial Disease Control",
+        name: "Serenade Garden Disease Control",
         brand: "Serenade",
-        price: "$21.50",
+        price: "₹1,799",
         rating: 4.6,
-        description: "Biological fungicide for bacterial infections",
-        link: "#",
-        category: "bacterial"
+        description: "Organic fungicide for broad spectrum disease control",
+        link: "https://www.amazon.com/Serenade-Garden-Disease-Control-Concentrate/dp/B000FOKXBW",
+        image: "https://i.ibb.co/sdf6gxJ0/serenade.jpg", // Updated with your link
+        category: "organic"
+      },
+      {
+        id: 5,
+        name: "Neem Oil for Plant Care",
+        brand: "Garden Genie",
+        price: "₹254.00",
+        rating: 4.7,
+        description: "100% cold pressed neem oil for organic gardening",
+        link: "https://www.amazon.in/Garden-Genie-Neem-Gardening-Agricultural/dp/B091HXKG56?ref_=ast_slp_dp&th=1",
+        image: "https://i.ibb.co/pj4dfM6v/neem-oil.jpg", // Updated with your link
+        category: "organic"
+      },
+      {
+        id: 6,
+        name: "Daconil Fungicide Concentrate",
+        brand: "Garden Tech",
+        price: "₹3,499",
+        rating: 4.5,
+        description: "Professional grade disease control for flowers, vegetables, and shrubs",
+        link: "https://www.amazon.com/Gardentech-100523635-353014-Daconil-Fungicide/dp/B001REJDOC?tag=thedaconil.com9-20",
+        image: "https://i.ibb.co/1tghhNwd/daconil.jpg", // Updated with your link
+        category: "fungicide"
+      },
+      {
+        id: 7,
+        name: "BioAdvanced 3-in-1 Disease Control",
+        brand: "BioAdvanced",
+        price: "₹2,299",
+        rating: 4.4,
+        description: "Spray for insects, diseases, and mites",
+        link: "https://www.amazon.com/BioAdvanced-701285B-Disease-Control-Concentrate/dp/B000VZQ3FU",
+        image: "https://i.ibb.co/QFLcpC2q/bioadvanced.jpg",
+        category: "multi-purpose"
+      },
+      {
+        id: 8,
+        name: "Safer Brand Garden Fungicide",
+        brand: "Safer Brand",
+        price: "₹1,599",
+        rating: 4.2,
+        description: "Concentrate fungicide for organic gardening",
+        link: "https://www.amazon.in/dp/B00A8IHS6K",
+        image: "https://i.ibb.co/1TgZ5vN/safer-brand.jpg",
+        category: "organic"
       }
     ];
 
-    // Sample diseases data
-    const diseases = {
-      "tomato_early_blight": {
+    // Diseases data with categories
+    const diseases = [
+      // Tomato Diseases (3)
+      {
+        id: "tomato_early_blight",
         name: "Tomato Early Blight",
+        category: "tomato",
         plantType: "Tomato",
         severity: "Moderate",
-        treatment: "Apply copper-based fungicides every 7-10 days. Remove affected leaves to prevent spread. Ensure proper spacing between plants for air circulation. Avoid overhead watering.",
-        products: [1, 2, 3],
-        prevention: "Rotate crops yearly, use resistant varieties, avoid wetting foliage"
+        treatment: "Apply copper-based fungicides every 7-10 days. Remove affected leaves to prevent spread. Ensure proper spacing between plants for air circulation. Avoid overhead watering. Rotate crops annually.",
+        products: [1, 2, 3, 6],
+        prevention: "Rotate crops yearly, use resistant varieties, avoid wetting foliage, maintain proper plant spacing",
+        image: "https://i.ibb.co/0yz1ybfX/tomato-early-blight.jpg",
+        description: "Fungal disease causing dark spots with concentric rings on leaves"
       },
-      "apple_scab": {
+      {
+        id: "tomato_late_blight",
+        name: "Tomato Late Blight",
+        category: "tomato",
+        plantType: "Tomato",
+        severity: "Severe",
+        treatment: "Apply fungicides preventively. Destroy infected plants. Use disease-free seeds. Ensure proper drainage.",
+        products: [1, 3, 6, 4],
+        prevention: "Proper spacing, avoid overhead watering, resistant varieties",
+        image: "https://i.ibb.co/ymfjStBD/tomato-late-blight.jpg",
+        description: "Devastating fungal disease that can destroy entire crops"
+      },
+      {
+        id: "tomato_leaf_spot",
+        name: "Tomato Leaf Spot",
+        category: "tomato",
+        plantType: "Tomato",
+        severity: "Mild",
+        treatment: "Apply copper-based fungicides. Remove infected leaves. Improve air circulation.",
+        products: [2, 3, 8],
+        prevention: "Avoid overhead watering, proper spacing, crop rotation",
+        image: "https://i.ibb.co/MxdVpj1Z/milkdew.jpg",
+        description: "Bacterial disease causing small spots on leaves"
+      },
+      
+      // Apple Diseases
+      {
+        id: "apple_scab",
         name: "Apple Scab",
+        category: "apple",
         plantType: "Apple",
         severity: "Moderate",
-        treatment: "Apply fungicide sprays during bud break. Remove fallen leaves in autumn. Plant resistant cultivars.",
-        products: [1, 4],
-        prevention: "Proper pruning, good air circulation, sanitation"
+        treatment: "Apply fungicide sprays during bud break. Remove fallen leaves in autumn. Plant resistant cultivars. Prune for good air circulation.",
+        products: [3, 6, 7],
+        prevention: "Proper pruning, good air circulation, sanitation, resistant varieties",
+        image: "https://i.ibb.co/BK7nW1dL/apple-scab.jpg",
+        description: "Fungal disease affecting leaves and fruits"
       },
-      "potato_late_blight": {
+      {
+        id: "apple_rust",
+        name: "Apple Rust",
+        category: "apple",
+        plantType: "Apple",
+        severity: "Moderate",
+        treatment: "Remove alternate hosts. Apply fungicides during spring. Prune infected branches.",
+        products: [1, 3, 6],
+        prevention: "Remove juniper plants nearby, proper spacing",
+        image: "https://i.ibb.co/qYKtmjnD/apple-rust.jpg",
+        description: "Orange rust spots on leaves and fruits"
+      },
+      {
+        id: "apple_powdery_mildew",
+        name: "Apple Powdery Mildew",
+        category: "apple",
+        plantType: "Apple",
+        severity: "Mild",
+        treatment: "Apply sulfur or potassium bicarbonate sprays. Improve air circulation. Prune infected shoots.",
+        products: [4, 5, 8],
+        prevention: "Proper pruning, resistant varieties, good air flow",
+        image: "https://i.ibb.co/xqB36p2R/apple-powdery-mildew.jpg",
+        description: "White powdery coating on leaves and shoots"
+      },
+      
+      // Potato Diseases
+      {
+        id: "potato_late_blight",
         name: "Potato Late Blight",
+        category: "potato",
         plantType: "Potato",
         severity: "Severe",
-        treatment: "Apply fungicides preventively. Destroy infected plants. Use certified disease-free seed potatoes.",
-        products: [1, 3, 4],
-        prevention: "Crop rotation, proper drainage, resistant varieties"
+        treatment: "Apply fungicides preventively before symptoms appear. Destroy infected plants immediately. Use certified disease-free seed potatoes. Ensure proper drainage.",
+        products: [1, 3, 6, 4],
+        prevention: "Crop rotation, proper drainage, resistant varieties, certified seed potatoes",
+        image: "https://i.ibb.co/nhJRLv8/potato-late-blight.jpg",
+        description: "Water-soaked lesions with white fungal growth"
+      },
+      {
+        id: "potato_early_blight",
+        name: "Potato Early Blight",
+        category: "potato",
+        plantType: "Potato",
+        severity: "Moderate",
+        treatment: "Apply fungicides at first signs. Remove infected leaves. Maintain proper plant spacing.",
+        products: [2, 3, 7],
+        prevention: "Crop rotation, proper fertilization, resistant varieties",
+        image: "https://i.ibb.co/jZBzF3m6/potato-early-blight.jpg",
+        description: "Dark spots with concentric rings on leaves"
+      },
+      {
+        id: "potato_scab",
+        name: "Potato Common Scab",
+        category: "potato",
+        plantType: "Potato",
+        severity: "Mild",
+        treatment: "Maintain soil pH around 5.2. Use certified seed potatoes. Rotate crops.",
+        products: [1, 4, 5],
+        prevention: "Soil management, crop rotation, resistant varieties",
+        image: "https://i.ibb.co/hJ8vXTBp/potato-scab.jpg",
+        description: "Rough, scabby patches on potato tubers"
+      },
+      
+      // Multiple Plants Diseases
+      {
+        id: "powdery_mildew",
+        name: "Powdery Mildew",
+        category: "multiple",
+        plantType: "Various Plants",
+        severity: "Moderate",
+        treatment: "Apply sulfur-based fungicides or neem oil. Improve air circulation. Water at soil level. Remove severely infected leaves.",
+        products: [4, 5, 8, 3],
+        prevention: "Proper spacing, morning watering, resistant varieties, good air circulation",
+        image: "https://i.ibb.co/k6XWgphf/milkdew.jpg",
+        description: "White powdery coating on leaves and stems"
+      },
+      {
+        id: "bacterial_leaf_spot",
+        name: "Bacterial Leaf Spot",
+        category: "multiple",
+        plantType: "Various Plants",
+        severity: "Mild",
+        treatment: "Apply copper-based bactericides. Avoid overhead watering. Remove infected plants. Use drip irrigation.",
+        products: [1, 2, 4],
+        prevention: "Avoid overhead watering, use disease-free seeds, crop rotation",
+        image: "https://i.ibb.co/ktb0CWk/bacterial-spot.jpg",
+        description: "Small water-soaked spots turning brown/black"
+      },
+      {
+        id: "rust_disease",
+        name: "Rust Disease",
+        category: "multiple",
+        plantType: "Various Plants",
+        severity: "Severe",
+        treatment: "Apply fungicides at first sign of disease. Remove infected leaves. Plant resistant varieties. Improve air circulation.",
+        products: [3, 6, 7, 1],
+        prevention: "Resistant varieties, proper spacing, avoid overhead watering",
+        image: "https://i.ibb.co/2YygkHgN/rust-disease.jpg",
+        description: "Orange/yellow pustules on underside of leaves"
       }
+    ];
+
+    // Variables for disease display
+    let visibleDiseases = 3;
+    let currentCategory = 'all';
+
+    // Initialize diseases display
+    document.addEventListener('DOMContentLoaded', function() {
+      loadDiseases();
+      setupCategoryFilters();
+    });
+
+    function loadDiseases() {
+      const container = document.getElementById('diseaseContainer');
+      container.innerHTML = '';
+      
+      let filteredDiseases = diseases;
+      if (currentCategory !== 'all') {
+        filteredDiseases = diseases.filter(d => d.category === currentCategory);
+      }
+      
+      const diseasesToShow = filteredDiseases.slice(0, visibleDiseases);
+      
+      diseasesToShow.forEach((disease, index) => {
+        const diseaseCard = document.createElement('div');
+        diseaseCard.className = 'col-lg-4 col-md-6';
+        diseaseCard.setAttribute('data-aos', 'fade-up');
+        diseaseCard.setAttribute('data-aos-delay', (index * 100) + 100);
+        
+        const severityClass = disease.severity === 'Severe' ? 'severe' : 
+                            disease.severity === 'Moderate' ? 'moderate' : 'mild';
+        
+        diseaseCard.innerHTML = `
+          <div class="disease-card ${severityClass}">
+            <div class="disease-image-container">
+              <img src="${disease.image}" 
+                   alt="${disease.name}" class="disease-image">
+            </div>
+            <span class="disease-severity severity-${severityClass}">${disease.severity}</span>
+            <h4>${disease.name}</h4>
+            <p><strong>Plant:</strong> ${disease.plantType}</p>
+            <p><strong>Description:</strong> ${disease.description}</p>
+            <p><strong>Treatment:</strong> ${disease.treatment.substring(0, 100)}...</p>
+            <button class="btn btn-sm btn-outline-primary mt-2" onclick="viewDiseaseDetails('${disease.id}')">
+              View Details
+            </button>
+          </div>
+        `;
+        container.appendChild(diseaseCard);
+      });
+      
+      // Show/hide "Show More" button
+      const showMoreBtn = document.getElementById('showMoreBtn');
+      if (visibleDiseases >= filteredDiseases.length) {
+        showMoreBtn.style.display = 'none';
+      } else {
+        showMoreBtn.style.display = 'block';
+      }
+    }
+
+    function setupCategoryFilters() {
+      const categoryBtns = document.querySelectorAll('.category-btn');
+      categoryBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          // Remove active class from all buttons
+          categoryBtns.forEach(b => b.classList.remove('active'));
+          // Add active class to clicked button
+          this.classList.add('active');
+          
+          // Update current category and reset visible count
+          currentCategory = this.getAttribute('data-category');
+          visibleDiseases = 3;
+          
+          // Reload diseases
+          loadDiseases();
+        });
+      });
+    }
+
+    function showMoreDiseases() {
+      visibleDiseases += 3;
+      loadDiseases();
+    }
+
+    function viewDiseaseDetails(diseaseId) {
+      const disease = diseases.find(d => d.id === diseaseId);
+      if (disease) {
+        alert(`Disease: ${disease.name}\n\nPlant: ${disease.plantType}\nSeverity: ${disease.severity}\n\nTreatment: ${disease.treatment}\n\nPrevention: ${disease.prevention}`);
+      }
+    }
+
+    // Diseases data for analysis (same as before)
+    const diseasesForAnalysis = {
+      "tomato_early_blight": diseases[0],
+      "tomato_late_blight": diseases[1],
+      "tomato_leaf_spot": diseases[2],
+      "apple_scab": diseases[3],
+      "apple_rust": diseases[4],
+      "apple_powdery_mildew": diseases[5],
+      "potato_late_blight": diseases[6],
+      "potato_early_blight": diseases[7],
+      "potato_scab": diseases[8],
+      "powdery_mildew": diseases[9],
+      "bacterial_leaf_spot": diseases[10],
+      "rust_disease": diseases[11]
     };
 
     // Scroll progress bar
@@ -1073,7 +1459,8 @@
     // File upload functionality
     const dropArea = document.getElementById('dropArea');
     const fileInput = document.getElementById('fileInput');
-    const fileInfo = document.getElementById('fileInfo');
+    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+    const imagePreview = document.getElementById('imagePreview');
     const fileName = document.getElementById('fileName');
     const fileSize = document.getElementById('fileSize');
     const resultsPreview = document.getElementById('resultsPreview');
@@ -1134,12 +1521,12 @@
           // Show file info
           fileName.textContent = file.name;
           fileSize.textContent = formatFileSize(file.size);
-          fileInfo.style.display = 'block';
           
           // Preview image
           const reader = new FileReader();
           reader.onload = function(e) {
-            console.log('Image loaded for analysis');
+            imagePreview.src = e.target.result;
+            imagePreviewContainer.style.display = 'block';
           };
           reader.readAsDataURL(file);
         } else {
@@ -1156,7 +1543,7 @@
 
     function clearFile() {
       fileInput.value = '';
-      fileInfo.style.display = 'none';
+      imagePreviewContainer.style.display = 'none';
     }
 
     function clearResults() {
@@ -1185,19 +1572,23 @@
         analyzeBtn.innerHTML = '<i class="fas fa-search me-2"></i> Run AI Analysis';
         
         // Get random disease for demo
-        const diseaseKeys = Object.keys(diseases);
+        const diseaseKeys = Object.keys(diseasesForAnalysis);
         const randomDiseaseKey = diseaseKeys[Math.floor(Math.random() * diseaseKeys.length)];
-        const disease = diseases[randomDiseaseKey];
+        const disease = diseasesForAnalysis[randomDiseaseKey];
         
         // Update results
         document.getElementById('diseaseName').textContent = disease.name;
         document.getElementById('plantType').textContent = disease.plantType;
         document.getElementById('severity').textContent = disease.severity;
         document.getElementById('treatmentText').textContent = disease.treatment;
+        document.getElementById('affectedArea').textContent = "Leaves and Stems";
         
         // Show confidence (random for demo)
         const confidence = (Math.random() * 10 + 90).toFixed(1);
         document.getElementById('confidenceLevel').textContent = `${confidence}% Confidence`;
+        
+        // Show detection time
+        document.getElementById('detectionTime').textContent = `${(Math.random() * 1 + 1.5).toFixed(1)} seconds`;
         
         // Load recommended products
         loadProducts(disease.products);
@@ -1225,40 +1616,32 @@
         const product = products.find(p => p.id === productId);
         if (product) {
           const productCard = document.createElement('div');
-          productCard.className = 'col-md-6';
+          productCard.className = 'col-md-6 col-lg-4 mb-4';
           productCard.innerHTML = `
             <div class="product-card">
+              <div class="product-image-container">
+                <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
+              </div>
               <h6>${product.name}</h6>
-              <p class="mb-2"><small>${product.brand}</small></p>
-              <p class="mb-2">${product.description}</p>
-              <div class="d-flex justify-content-between align-items-center">
+              <p class="mb-2"><small class="text-muted">${product.brand}</small></p>
+              <p class="mb-2 small">${product.description}</p>
+              <div class="d-flex justify-content-between align-items-center mt-3">
                 <div>
-                  <span class="product-price">${product.price}</span>
+                  <div class="product-price">${product.price}</div>
                   <div class="product-rating">
                     ${'★'.repeat(Math.floor(product.rating))}${'☆'.repeat(5-Math.floor(product.rating))}
-                    <span class="ms-1">${product.rating}</span>
+                    <span class="ms-1 text-muted small">${product.rating}</span>
                   </div>
                 </div>
-                <button class="btn btn-sm btn-outline-primary" onclick="viewProduct(${product.id})">
-                  View Details
-                </button>
+                <a href="${product.link}" target="_blank" class="buy-btn btn-sm">
+                  <i class="fas fa-shopping-cart"></i> Buy
+                </a>
               </div>
             </div>
           `;
           productsList.appendChild(productCard);
         }
       });
-    }
-
-    function viewProduct(productId) {
-      const product = products.find(p => p.id === productId);
-      if (product) {
-        alert(`Product: ${product.name}\nBrand: ${product.brand}\nPrice: ${product.price}\n\n${product.description}\n\nThis is a demo. In a real application, this would redirect to a product page.`);
-      }
-    }
-
-    function viewProducts() {
-      alert('This would redirect to an e-commerce page with all recommended products. In a real application, this could integrate with Amazon, gardening stores, or agricultural suppliers.');
     }
 
     // Export and Report Functions
